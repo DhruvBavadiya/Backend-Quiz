@@ -29,6 +29,12 @@ app.use("/app/v1", quizRoute);
 app.use("/app/v1", userRoutes);
 app.use("/app/v1", LeaderBoard);
 
+app.get("/healthz",(req,res)=>{
+  res.status(200).json({
+    success:true
+  })
+})
+
 // Server Listening
 app.listen(PORT, () => {
   console.log("App listening on port:", PORT);
