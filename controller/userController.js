@@ -175,7 +175,6 @@ exports.resetpassword = async (req, res, next) => {
 };
 
 exports.fetch = async (req, res, next) => {
-  try {
     // Retrieve the token from the cookie
     const token = req.cookies["auth-token"];
 
@@ -184,11 +183,13 @@ exports.fetch = async (req, res, next) => {
 
     const userid = decoded.id;
     const user = await User.findById(userid).select("-password");
-    res.send(user);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("some error occurred");
+  if(!user){
+    res.status(401).json({
+      success:false
+    })
   }
+    res.send(user);
+  
 };
 
 exports.Submit = async(req,res,next)=>{
