@@ -175,6 +175,7 @@ exports.resetpassword = async (req, res, next) => {
 };
 
 exports.fetch = async (req, res, next) => {
+  try {
     // Retrieve the token from the cookie
     const token = req.cookies["auth-token"];
 
@@ -183,13 +184,12 @@ exports.fetch = async (req, res, next) => {
 
     const userid = decoded.id;
     const user = await User.findById(userid).select("-password");
-  if(!user){
-    res.status(401).json({
-      success:false
-    })
-  }
     res.send(user);
-  
+   } catch (error) {
+    return res.status(500).send({
+      message: error.message || "An error occurred while logging in.",
+    });
+  }
 };
 
 exports.Submit = async(req,res,next)=>{
