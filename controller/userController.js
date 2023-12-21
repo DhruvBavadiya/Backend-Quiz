@@ -185,9 +185,10 @@ exports.fetch = async (req, res, next) => {
     const userid = decoded.id;
     const user = await User.findById(userid).select("-password");
     res.send(user);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("some error occurred");
+   } catch (error) {
+    return res.status(500).send({
+      message: error.message || "An error occurred while logging in.",
+    });
   }
 };
 
