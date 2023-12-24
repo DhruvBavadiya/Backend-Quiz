@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../Utils/sendEmail");
 const crypto = require("crypto")
 
+const key = process.env.KEY
+
 exports.addUser = async (req, res, next) => {
   const data = req.body;
 
@@ -177,13 +179,11 @@ exports.resetpassword = async (req, res, next) => {
 exports.fetch = async (req, res, next) => {
   try {
     // Retrieve the token from the cookie
-    const token = req.cookies["auth-token"];
+    const userId = req.body
 
     // Verify the token
-    const decoded = jwt.verify(token, process.env.KEY);
-
-    const userid = decoded.id;
-    const user = await User.findById(userid).select("-password");
+    
+    const user = await User.findById(userId).select("-password");
     res.send(user);
    } catch (error) {
     return res.status(500).send({
