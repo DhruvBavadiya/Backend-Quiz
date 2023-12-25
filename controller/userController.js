@@ -179,7 +179,7 @@ exports.resetpassword = async (req, res, next) => {
 exports.fetch = async (req, res, next) => {
   try {
     // Retrieve the token from the cookie
-    const userId = req.body
+    const userId = req.body.userId
 
     // Verify the token
     
