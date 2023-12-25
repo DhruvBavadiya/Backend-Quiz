@@ -9,6 +9,15 @@ const key = process.env.KEY
 exports.addUser = async (req, res, next) => {
   const data = req.body;
 
+  const uu = await User.findOne({email:data.email})
+
+  if(uu){
+    res.status(401).json({
+      success:false,
+      message:"email is already registered"
+    })
+  }
+
   try {
     data.password = bcrypt.hashSync(data.password, 8);
     const user = await User.create(data);
@@ -194,11 +203,9 @@ exports.fetch = async (req, res, next) => {
 
 exports.Submit = async(req,res,next)=>{
   try {
-    const token = req.cookies["auth-token"];
-    // Verify the token
-    const decoded = jwt.verify(token, process.env.KEY);
-    const userid = decoded.id;
-    const user = await User.findById(userid).select("-password");
+    const userId = req.body.userId
+
+    const user = await User.findById(userId).select("-password");
     const data = req.body
 
     user.totalExam = user.totalExam + 1;
