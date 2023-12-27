@@ -239,3 +239,49 @@ exports.allUsers = async(req,res,next)=>{
     users
   })
 }
+
+
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const { username, mobile, email } = req.body;
+
+    // Check if the userId is provided
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required for updating user.",
+      });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Update user data based on provided fields
+    user.username = username || user.username;
+    user.mobile = mobile || user.mobile;
+    user.email = email || user.email;
+    // Add other fields as needed
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully.",
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "An error occurred while updating user.",
+    });
+  }
+};
