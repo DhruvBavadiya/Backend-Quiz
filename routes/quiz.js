@@ -1,5 +1,5 @@
 const express = require("express");
-const { addQuiz, addSection, getBycategory, getTrending, getSections } = require("../controller/quizController");
+const { addQuiz, addSection, getBycategory, getTrending, getSections, updateSectionImage } = require("../controller/quizController");
 
 const router = express.Router();
 
@@ -8,5 +8,6 @@ router.post("/addsection", addSection);
 router.get("/getbycategory", getBycategory);
 router.get("/gettrending", getTrending);
 router.get("/getsection", getSections);
+router.put("/section/updateimage",updateSectionImage);
 
 module.exports = router;

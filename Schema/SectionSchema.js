@@ -17,6 +17,9 @@ const SectionSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  image: {
+    type: String, // Assuming you store the image URL or path
+  },
   questions: [
     {
       questionId: {

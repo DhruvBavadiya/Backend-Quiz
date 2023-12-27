@@ -175,3 +175,37 @@ exports.getSections = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updateSectionImage = async (req, res) => {
+  try {
+    // Fetch the section from the database
+    const sectionId = req.body.sectionId;
+    const imageUrl = req.body.imageUrl;
+    const section = await Section.findOne({ sectionId });
+
+    if (!section) {
+      console.log('Section not found');
+      return res.status(404).json({
+        success: false,
+        error: 'Section not found',
+      });
+    }
+
+    // Update the image field
+    section.image = imageUrl;
+
+    // Save the updated section back to the database
+    await section.save();
+    res.status(200).json({
+      success: true,
+      section,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal Server Error',
+    });
+  }
+};
+
