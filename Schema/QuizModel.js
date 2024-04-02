@@ -14,7 +14,6 @@ const QuizModelSchema = new mongoose.Schema({
       questionId: {
         type: Number,
         required: true,
-        // unique: true,
       },
       questionText: {
         type: String,
@@ -27,8 +26,8 @@ const QuizModelSchema = new mongoose.Schema({
         d: String,
       },
       correctOption: {
-        type: String,
-        enum: ["a", "b", "c", "d"],
+        type: [String], // Change type to an array of strings
+        enum: ["a", "b", "c", "d"], // Update enum if needed
         required: true,
       },
       difficulty: {

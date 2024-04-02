@@ -37,8 +37,8 @@ const SectionSchema = new mongoose.Schema({
         d: String,
       },
       correctOption: {
-        type: String,
-        enum: ["a", "b", "c", "d"],
+        type: [String], // Change type to an array of strings
+        enum: ["a", "b", "c", "d"], // Update enum if needed
         required: true,
       },
       difficulty: {
@@ -54,3 +54,6 @@ const SectionSchema = new mongoose.Schema({
 const QuizSection = mongoose.model('QuizSection', SectionSchema);
 
 module.exports = QuizSection;
+
+
+

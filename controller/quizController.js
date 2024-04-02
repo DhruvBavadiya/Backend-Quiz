@@ -209,3 +209,141 @@ exports.updateSectionImage = async (req, res) => {
   }
 };
 
+// exports.submitAnswers = async (req, res, next) => {
+//   try {
+//     const { answers } = req.body;
+//     const sectionId = req.params.sectionId;
+
+//     // Fetch questions for the sectionId from the database
+//     const section = await Section.findOne({ sectionId });
+
+//     if (!section || !section.questions || section.questions.length === 0) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Section not found or no questions available for the section.",
+//       });
+//     }
+
+//     let score = 0;
+
+//     // Iterate over each submitted answer
+//     for (const submittedAnswer of answers) {
+//       const question = section.questions.find(
+//         (q) => q.questionId === submittedAnswer.questionId
+//       );
+
+//       if (!question) {
+//         // Question not found
+//         continue;
+//       }
+
+//       // Check if submitted answer is correct
+//       if (Array.isArray(submittedAnswer.selectedOptions)) {
+//         // If multiple options are selected
+//         const correctOptions = question.correctOptions.sort();
+//         const selectedOptions = submittedAnswer.selectedOptions.sort();
+//         if (correctOptions.length === selectedOptions.length && correctOptions.every(option => selectedOptions.includes(option))) {
+//           score++;
+//         }
+//       } else {
+//         // If only one option is selected
+//         if (submittedAnswer.selectedOptions === question.correctOption) {
+//           score++;
+//         }
+//       }
+//     }
+
+//     // Return the score to the frontend
+//     res.status(200).json({ score });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+exports.submitAnswers = async (req, res, next) => {
+  console.log("inn");
+  try {
+    const { answers } = req.body;
+    const sectionId = req.params.sectionId;
+
+    // Fetch questions for the sectionId from the database
+    const section = await Section.findOne({ sectionId });
+
+    if (!section || !section.questions || section.questions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found or no questions available for the section.",
+      });
+    }
+
+    let totalScore = 0;
+    let incorrectAnswers = 0;
+    let correctAnswers = 0;
+    const totalQuestions = section.questions.length; // Total number of questions
+
+    // Iterate over each submitted answer
+    for (const submittedAnswer of answers) {
+      const question = section.questions.find(
+        (q) => q.questionId === submittedAnswer.questionId
+      );
+
+      if (!question) {
+        // Question not found
+        continue;
+      }
+
+      // Check if submitted answer is correct
+      let score = 0;
+      const correctOptions = question.correctOption;
+      const selectedOptions = submittedAnswer.selectedOptions;
+
+      // If any selected option is not correct, mark the whole question wrong
+      if (selectedOptions.some(option => !correctOptions.includes(option))) {
+        incorrectAnswers++; // Increment incorrect answers count
+        continue; // Move to the next question
+      }
+
+      correctAnswers++; // Increment correct answers count
+
+      // Calculate score based on the number of correct options selected
+      score = selectedOptions.length / correctOptions.length;
+
+      totalScore += score;
+    }
+
+    // Calculate final score out of 10
+    const finalScore = totalQuestions > 0 ? (totalScore / totalQuestions) * 10 : 0;
+
+    // Return the final score, number of incorrect answers, and number of correct answers to the frontend
+    res.status(200).json({ score: finalScore, incorrectAnswers, correctAnswers });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
+exports.getQuestionsBySectionId = async (req, res, next) => {
+  try {
+    const { sectionId } = req.params;
+
+    // Find questions in the QuizModel where sectionId matches
+    const questions = await Quiz.find({ sectionId });
+
+    if (!questions || questions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No questions found for the given sectionId",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      questions,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
